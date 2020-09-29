@@ -5,6 +5,15 @@
 
 # the optional function at the end (location_check) checks that any asset with an updated location ID did not have its location information drastically changed 
 
+import pandas as pd
+import re, math
+import copy, time
+import numpy as np
+from fuzzywuzzy import fuzz
+import usaddress
+import json, requests
+from bs4 import BeautifulSoup
+
 
 class FindDuplicates:
     fileName = ""
