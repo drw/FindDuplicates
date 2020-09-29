@@ -20,10 +20,10 @@ class FindDuplicates:
     assetsFile = ""
     global df
     global assetdf
-    #assetdf used to be necessary when deduplicating raw assets, because it has the location_id and finalized location info that raw assets did not have
-    #now that updated finalized asset dumps are what is primarily being deduplicated, this isn't necessary but I haven't updated my code 
-    #so it still accepts two asset csv files as parameters and makes two dataframes, one of the group of assets to be deduplicated (df) 
-    #and one of all the finalized assets (assetdf)
+    # assetdf used to be necessary when deduplicating raw assets, because it has the location_id and finalized location info that raw assets did not have
+    # now that updated finalized asset dumps are what is primarily being deduplicated, this isn't necessary but I haven't updated my code 
+    # so it still accepts two asset csv files as parameters and makes two dataframes, one of the group of assets to be deduplicated (df) 
+    # and one of all the finalized assets (assetdf)
     assetdf = pd.DataFrame()
     # df is the data frame created from the raw csv file that is passed into the class to instantiate it 
     df = pd.DataFrame()
@@ -37,24 +37,22 @@ class FindDuplicates:
     global count
     count = 0
 
-    
     def __init__(self, fileName, assetsFile):
         self.fileName = fileName
         self.assetsFile = assetsFile
         self.assetdf = pd.read_csv(assetsFile)
         self.df = pd.read_csv(fileName)
         self.df['order'] = 0
-        #the reason I did this instead of just calling the index of an asset is that
-        #for some reason when I did row.index it did not just return a number
-        #it returned a bunch of information about the asset
-        #so I decided to set an "order" column that I could easily get as row.order later in the code
+        # the reason I did this instead of just calling the index of an asset is that
+        # for some reason when I did row.index it did not just return a number
+        # it returned a bunch of information about the asset
+        # so I decided to set an "order" column that I could easily get as row.order later in the code
         for index, row in self.df.iterrows():
             idNum = row.id
             self.df.loc[self.df['id'] == idNum, 'order'] = index
 
         print("---")
 
-        
     # parseAddresses iterates through the data frame and concatenates the street_address, city, state, and zip_code into a full address for each asset/row 
     # then uses usaddress.tag to parse the full address
     #     if an error is thrown because of address parsing its handled- the row with the address that caused the error is put 
@@ -369,9 +367,9 @@ class FindDuplicates:
                         newFlag = s + f
                         dupdf.at[index, 'flags'] = newFlag
                     return dupdf
-                
-                #code from asset updater to find distance between geocoordinates
-                
+
+                # code from asset updater to find distance between geocoordinates
+
                 def distance_on_unit_sphere(lat1, long1, lat2, long2):
                     # Convert latitude and longitude to
                     # spherical coordinates in radians.
@@ -419,8 +417,6 @@ class FindDuplicates:
                     # in your favorite set of units to get length.
                     return R * arc
 
-                
-                
                 # to avoid finding the same set of duplicates twice or more times, the 
                 # order numbers(set at the beginning of the code when class is instantiated) of 
                 # the duplicates are compared and if any are less than the current index number 
@@ -531,6 +527,8 @@ class FindDuplicates:
                             print
                             print("--------------------------------------------")
                             print("Conflicting asset types: ")
+                            pd.set_option('display.max_columns', None)
+                            pd.set_option('display.width', None)
                             print(dupdf[['name', 'asset_type', 'street_address']])
                             print
                             userInput = ''
@@ -580,7 +578,7 @@ class FindDuplicates:
 
                         outputfile = outputfile.append(dupdf)
 
-                        
+
                     # if theres more than 1 row left in the dupdf and their names have a fuzzy score >=83 they go 
                     # through the process of being merged
                     elif numOfRows > 1 and ratio >= 83 and mergeTypes == True:
@@ -599,6 +597,8 @@ class FindDuplicates:
                             print("Different asset names: ")
                             print(dupdf[['name', 'street_address']])
                             print
+                            print("Choose a row 1 - "),
+                            print(len(printdf))
                             userID = input("Row with primary name, or 0 to flag and skip: ")
                             if userID == 0:
                                 dupdf = addFlag(dupdf)
@@ -617,7 +617,6 @@ class FindDuplicates:
                         string_listofIDs = "".join(listofids)
                         dupdf.loc[dupdf['primary'] == 1, ['ids_to_merge']] = string_listofIDs
 
-                        
                         # the tags of the duplicate entries are joined, separated by ',' and added to the primary entry
                         for index, row in dupdf.iterrows():
                             tempTag = row.tags
@@ -630,7 +629,6 @@ class FindDuplicates:
                         if not (isNaN(string_listofTags)):
                             dupdf.loc[dupdf['primary'] == 1, ['tags']] = string_listofTags
 
-                            
                         # the dupdf is iterated through and for each column
                         # each of the assets are checked for an existing value
                         # if there is a value in one asset but not the others, this value is added to the primary entry
@@ -667,8 +665,7 @@ class FindDuplicates:
                                     dupdf = addFlag(dupdf)
                                 else:
                                     dupdf.loc[dupdf['primary'] == 1, ['asset_type']] = typeList[userID - 1]
-                                    
-                                    
+
                         # phone column
                         x = ""
                         printdf = dupdf
@@ -939,7 +936,6 @@ class FindDuplicates:
                             else:
                                 dupdf.loc[dupdf['primary'] == 1, ['url']] = urlList[userID - 1]
 
-                                
                         # notes column
                         # notes have the option to be concatenated 
                         x = ""
@@ -974,8 +970,7 @@ class FindDuplicates:
                             elif userChoice == 0:
                                 dupdf = addFlag(dupdf)
 
-                                
-                        #gets location information from location instance
+                        # gets location information from location instance
                         def get_loc_info(location_id):
                             location_id = str(location_id)
                             location_id += '/'
@@ -1009,7 +1004,6 @@ class FindDuplicates:
                             finally:
                                 return latitude, longitude
 
-                            
                         locIDList = []
                         newdf = pd.DataFrame(data=None, columns=assetdf.columns)
                         tempdf = pd.DataFrame(data=None, columns=assetdf.columns)
@@ -1180,7 +1174,7 @@ class FindDuplicates:
         print
         print("write to file completed")
 
-#checks that any asset with an updated location ID did not have its location information drastically changed 
+    # checks that any asset with an updated location ID did not have its location information drastically changed 
     def location_check(self):
         # method checks if value passed into it is NaN
         def isNaN(string):
@@ -1255,5 +1249,5 @@ class FindDuplicates:
         print(userFileName)
 
 
-        
-      
+
+
