@@ -5,11 +5,16 @@
 
 # the optional function at the end (location_check) checks that any asset with an updated location ID did not have its location information drastically changed 
 
+
 class FindDuplicates:
     fileName = ""
     assetsFile = ""
     global df
     global assetdf
+    #assetdf used to be necessary when deduplicating raw assets, because it has the location_id and finalized location info that raw assets did not have
+    #now that updated finalized asset dumps are what is primarily being deduplicated, this isn't necessary but I haven't updated my code 
+    #so it still accepts two asset csv files as parameters and makes two dataframes, one of the group of assets to be deduplicated (df) 
+    #and one of all the finalized assets (assetdf)
     assetdf = pd.DataFrame()
     # df is the data frame created from the raw csv file that is passed into the class to instantiate it 
     df = pd.DataFrame()
