@@ -1094,9 +1094,9 @@ class FindDuplicates:
     # writeToFile calls all of the methods in the FindDuplicates class to parse, clean, and merge the data.
     # the resulting data frame of processed assets is outputfile
     # which is written to a csv file that the user names (.csv ending is added by the code)
-    # and the data frame with the assets that couldn't be parsed or were missing parts of their address
-    # and weren't processed is parseErrors 
-    # this is written to a different csv file that adds _parse_errors.csv to the end of the user's file name
+    # and the data frame with the assets that couldn't be parsed is parseErrors and 
+    # assets missing parts of their address is missingValues 
+    # these are written to csv files ending in _parse_errors.csv and _missing_values.csv
     def writeToFile(self, check=None):
         print
         print("parsing addresses")
